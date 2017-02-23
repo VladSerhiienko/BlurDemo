@@ -51,8 +51,8 @@ Images
 ![alt text][color]
 ![alt text][blur]
 
-[color]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Colored"
-[blur]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Blurred"
+[color]: https://github.com/VladSerhiienko/BlurDemo/blob/master/Color.PNG "Color"
+[blur]: https://github.com/VladSerhiienko/BlurDemo/blob/master/Blurred.PNG "Blurred"
 
 License
 =======
