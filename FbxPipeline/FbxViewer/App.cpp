@@ -592,10 +592,16 @@ void App::Update( float deltaSecs, Input const& inputState ) {
         nk_spacing( content->nk, 1 );
 
         nk_layout_row_dynamic( content->nk, 30, 1 );
-        reset = nk_checkbox_label( content->nk, "Enable Blur", &content->enableBlur );
+
+        const bool prevEnabled = content->enableBlur;
+        nk_checkbox_label( content->nk, "Enable Blur", &content->enableBlur );
+        reset |= prevEnabled != content->enableBlur;
 
         if ( content->enableBlur ) {
+            const auto prevItCount = content->blurItCount;
             nk_property_int( content->nk, "Blur Iterations", 0, &content->blurItCount, 16, 1, 1 );
+            reset |= prevItCount != content->blurItCount;
+
             nk_property_float( content->nk, "Blur Radius", 0, &content->blurRadius, 16, 0.01, 0.001 );
         }
 
@@ -653,8 +659,8 @@ void App::Update( float deltaSecs, Input const& inputState ) {
     bgfx::dbgTextPrintf( 0, 1, 0x4f, "fbxv/ubisoft demo" );
     bgfx::dbgTextPrintf( 0, 2, 0x2f, "Frame: % 7.3f[ms]", deltaSecs * 1000.0f );
 
-    float    proj[ 16 ];
-    float    view[ 16 ];
+    float proj[16];
+    float view[16];
 
     // Env mtx.
     float mtxEnvView[ 16 ];
@@ -716,12 +722,14 @@ void App::Update( float deltaSecs, Input const& inputState ) {
         }
     } );
 
-    uint32_t id = 3;
+    uint32_t id = 2;
 
     if ( content->enableBlur ) {
         //
         // Blurring pass
         //
+
+        ++id;
 
         bx::mtxOrtho( proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f );
 
@@ -788,9 +796,10 @@ void App::Update( float deltaSecs, Input const& inputState ) {
         bgfx::setState( BGFX_STATE_RGB_WRITE );
         screenSpaceQuad( (float) width, (float) height, 0, bgfx::getCaps( )->originBottomLeft );
         bgfx::submit( id, content->programMaskCombine );
+        ++id;
     }
 
-    nk_sdl_render( NK_ANTI_ALIASING_ON, ++id );
+    nk_sdl_render( NK_ANTI_ALIASING_ON, 36 );
 }
 
 bool App::IsRunning( ) {
